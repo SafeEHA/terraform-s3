@@ -1,29 +1,28 @@
-# Define the AWS provider
 provider "aws" {
-  region = "eu-west-2" # Change to your preferred region
+  region = "eu-west-2"
 }
 
-# Create an S3 bucket
 resource "aws_s3_bucket" "example_bucket" {
-  bucket = "terraform-demo-bucket00456" # Replace with a unique bucket name
+  bucket = "terraform-demo-bucket123"
+}
 
-  # Enable versioning for the bucket
-  versioning {
-    enabled = true
+resource "aws_s3_bucket_versioning" "example_bucket_versioning" {
+  bucket = aws_s3_bucket.example_bucket.id
+  versioning_configuration {
+    status = "Enabled"
   }
+}
 
-  # Enable server-side encryption
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256" # Default encryption algorithm
-      }
+resource "aws_s3_bucket_server_side_encryption_configuration" "example_bucket_encryption" {
+  bucket = aws_s3_bucket.example_bucket.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
     }
   }
-
 }
 
-# Output the bucket name
 output "bucket_name" {
   value       = aws_s3_bucket.example_bucket.bucket
   description = "terraform_demo_bucket"
